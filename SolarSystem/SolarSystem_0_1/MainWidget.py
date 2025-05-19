@@ -1,14 +1,16 @@
-from PySide6.QtCore import QTimer, QPointF, QRectF, QElapsedTimer
+from PySide6.QtCore import QTimer, QPointF, QRectF, QElapsedTimer, Qt
 from PySide6.QtGui import QPainter, QColor, QPixmap, QPolygonF
 from PySide6.QtWidgets import QWidget
 import json
 import numpy as np
 from space_objects.physicalObject import PhysicalObject
+from view.Camera import Camera
 
 
 class MainWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.camera = Camera()
         self.setup_simulation()
         self.setup_visuals()
         self.load_solar_system("SolarSystem_0_1/data/SolarSystem.json")
@@ -24,12 +26,43 @@ class MainWidget(QWidget):
 
         self.elapsed_timer = QElapsedTimer()
         self.elapsed_timer.start()
+        self.central_point = QPointF(0, 0)
 
     def setup_visuals(self):
-        self.scale = 1.0
-        self.center_offset = QPointF(0, 0)
         self.trajectory_length = 1000
         self.setMouseTracking(True)
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.camera.start_drag(event.position().toPoint())
+
+    def mouseMoveEvent(self, event):
+        if self.camera.is_dragging:
+            self.camera.drag(event.position().toPoint())
+            self.update()
+
+    def mouseReleaseEvent(self, event):
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.camera.end_drag()
+
+    def wheelEvent(self, event):
+        zoom_factor = 1.1
+        # Получаем центр виджета
+        center = QPointF(self.width() / 2, self.height() / 2)
+        world_center_before = self.camera.screen_to_world(center)
+    
+        # Применяем масштабирование
+        old_scale = self.camera.scale
+        if event.angleDelta().y() > 0:
+            self.camera.scale *= zoom_factor
+        else:
+            self.camera.scale /= zoom_factor
+    
+        # Корректируем смещение камеры, чтобы центр остался на месте
+        world_center_after = self.camera.screen_to_world(center)
+        self.camera.offset += (world_center_after - world_center_before) * old_scale
+    
+        self.update()
 
     def load_solar_system(self, json_path):
         try:
@@ -106,41 +139,44 @@ class MainWidget(QWidget):
 
     def paintEvent(self, event):
         painter = QPainter(self)
+        self.camera.apply_transform(painter)
         self.draw_all_objects(painter)
         painter.end()
 
     def draw_all_objects(self, painter):
         center = QPointF(self.width() / 2, self.height() / 2)
-        self.scale = min(self.width(), self.height()) / 3_000_000_000_00  # Масштаб для визуализации
+        base_scale = min(self.width(), self.height()) / 3_000_000_000_00
+        
+        # Применяем масштаб камеры
+        effective_scale = base_scale * self.camera.scale
 
         # Рисуем траекторию
         if len(self.trajectory) > 1:
             painter.setPen(QColor(100, 100, 255, 150))
             points = [QPointF(
-                center.x() + x * self.scale,
-                center.y() + y * self.scale
+                center.x() + x * effective_scale,
+                center.y() + y * effective_scale
             ) for x, y in self.trajectory]
             painter.drawPolyline(QPolygonF(points))
 
         # Рисуем все объекты
         for obj in self.objects:
-            self.draw_object(painter, obj, center)
+            self.draw_object(painter, obj, center, effective_scale)
 
-    def draw_object(self, painter, obj, center):
+    def draw_object(self, painter, obj, center, scale):
         pos = obj.get_position()
         screen_pos = QPointF(
-            center.x() + pos[0] * self.scale,
-            center.y() + pos[1] * self.scale
+            center.x() + pos[0] * scale,
+            center.y() + pos[1] * scale
         )
 
-        size = obj.radius **(1/3) / 20
+        size = max(2, obj.radius**(1/3) / 20 * self.camera.scale)
         rect = QRectF(
             screen_pos.x() - size / 2,
             screen_pos.y() - size / 2,
             size, size
         )
 
-        # Рисуем текстуру
         if not obj.texture.isNull():
             painter.drawPixmap(rect, obj.texture, obj.texture.rect())
         else:
