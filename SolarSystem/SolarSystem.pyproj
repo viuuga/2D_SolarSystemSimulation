@@ -1,0 +1,61 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>d95c3351-8c94-4303-b0bd-0c9ecf6145cb</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>SolarSystem_0_1\MainApp.py</StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>SolarSystem</Name>
+    <RootNamespace>SolarSystem</RootNamespace>
+    <IsWindowsApplication>False</IsWindowsApplication>
+    <InterpreterId>Global|PythonCore|3.11</InterpreterId>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|PythonCore|3.11" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="SolarSystem_0_1\" />
+    <Folder Include="SolarSystem_0_1\data\" />
+    <Folder Include="SolarSystem_0_1\data\physical objects\" />
+    <Folder Include="SolarSystem_0_1\my_math\" />
+    <Folder Include="SolarSystem_0_1\my_math\__pycache__\" />
+    <Folder Include="SolarSystem_0_1\space_objects\" />
+    <Folder Include="SolarSystem_0_1\space_objects\__pycache__\" />
+    <Folder Include="SolarSystem_0_1\textures\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="SolarSystem_0_1\data\SolarSystem.json" />
+    <Content Include="SolarSystem_0_1\my_math\__pycache__\m_f_file.cpython-311.pyc" />
+    <Content Include="SolarSystem_0_1\space_objects\__pycache__\physicalObject.cpython-311.pyc" />
+    <Content Include="SolarSystem_0_1\textures\earth.png" />
+    <Content Include="SolarSystem_0_1\textures\moon.png" />
+    <Content Include="SolarSystem_0_1\textures\none_texture.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="SolarSystem_0_1\MainApp.py" />
+    <Compile Include="SolarSystem_0_1\MainWidget.py" />
+    <Compile Include="SolarSystem_0_1\my_math\m_f_file.py" />
+    <Compile Include="SolarSystem_0_1\space_objects\physicalObject.py" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+  <!-- Uncomment the CoreCompile target to enable the Build command in
+       Visual Studio and specify your pre- and post-build commands in
+       the BeforeBuild and AfterBuild targets below. -->
+  <!--<Target Name="CoreCompile" />-->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+</Project>
