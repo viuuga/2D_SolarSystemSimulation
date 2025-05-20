@@ -4,6 +4,7 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget,
                                QSizePolicy)
 
 from MainWidget import MainWidget
+from interface.SpeedSlider import SpeedWidget
 
 
 
@@ -13,52 +14,33 @@ class MainApp(QMainWindow):
         self.setMinimumWidth(800)
         self.setMinimumHeight(500)
         self.setWindowTitle("Solar system")
-        self.add_menu()
+        
+        self.mainWidget = MainWidget(self)
+        self.setCentralWidget(self.mainWidget)
+        
+        self.add_menu_and_controls()
 
-        mainWidget = MainWidget(self)
-        self.setCentralWidget(mainWidget)
-
-    def add_menu(self):
-        menu_bar = self.menuBar()
-        menu_bar.setNativeMenuBar(False)
-
+    def add_menu_and_controls(self):
         menu_container = QWidget()
-        menu_layout = QHBoxLayout()
-        menu_container.setLayout(menu_layout)
-
+        menu_layout = QHBoxLayout(menu_container)
+        menu_layout.setContentsMargins(0, 0, 0, 0)
+        
+        menu_bar = QMenuBar()
         file_menu = menu_bar.addMenu("Файл")
         file_menu.addAction("Настройки")
         file_menu.addAction("Выход")
-
-        control_widget = QWidget()
-        control_layout = QHBoxLayout()
-        control_widget.setLayout(control_layout)
-
-        self.speed_label = QLabel("Скорость: 10000x")
-        self.speed_slider = QSlider(Qt.Horizontal)
-        self.speed_slider.setMinimum(1)
-        self.speed_slider.setMaximum(1000000)
-        self.speed_slider.setValue(10000)
-        self.speed_slider.setFixedWidth(200)
-        self.speed_slider.valueChanged.connect(self.update_simulation_speed)
-
-        control_layout.addWidget(QLabel("Скорость:"))
-        control_layout.addWidget(self.speed_slider)
-        control_layout.addWidget(self.speed_label)
-        control_layout.setContentsMargins(10, 0, 10, 0)
-
-
-        menu_layout.addWidget(menu_bar, stretch=1)
-        menu_layout.addWidget(control_widget, stretch=1)
-
+        
+        self.control_widget = SpeedWidget(self)
+        self.control_widget.speed_changed.connect(self.handle_speed_change)
+        
+        menu_layout.addWidget(menu_bar)
+        menu_layout.addStretch()
+        menu_layout.addWidget(self.control_widget)
 
         self.setMenuWidget(menu_container)
 
-    def update_simulation_speed(self, value):
-        self.speed_label.setText(f"Скорость: {value:.2f}x")
-
-        if hasattr(self, 'centralWidget'):
-            self.centralWidget().time_acceleration = value
+    def handle_speed_change(self, value):
+        self.mainWidget.time_acceleration = value
 
 
 if __name__ == "__main__":

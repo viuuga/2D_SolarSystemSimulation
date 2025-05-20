@@ -26,7 +26,15 @@ class MainWidget(QWidget):
 
         self.elapsed_timer = QElapsedTimer()
         self.elapsed_timer.start()
-        self.central_point = QPointF(0, 0)
+        self.update_center_point()
+
+    def resizeEvent(self, event):
+        self.update_center_point()
+        super().resizeEvent(event)
+
+    def update_center_point(self):
+        self.center_glob_coords = QPointF(0, 0)
+        self.center_screen = QPointF(self.width() / 2, self.height() / 2)
 
     def setup_visuals(self):
         self.trajectory_length = 1000
@@ -47,40 +55,33 @@ class MainWidget(QWidget):
 
     def wheelEvent(self, event):
         zoom_factor = 1.1
-        # Получаем центр виджета
-        center = QPointF(self.width() / 2, self.height() / 2)
-        world_center_before = self.camera.screen_to_world(center)
-    
-        # Применяем масштабирование
-        old_scale = self.camera.scale
+        mouse_pos = event.position()
+
         if event.angleDelta().y() > 0:
             self.camera.scale *= zoom_factor
         else:
             self.camera.scale /= zoom_factor
-    
-        # Корректируем смещение камеры, чтобы центр остался на месте
-        world_center_after = self.camera.screen_to_world(center)
-        self.camera.offset += (world_center_after - world_center_before) * old_scale
-    
+        
         self.update()
+
 
     def load_solar_system(self, json_path):
         try:
             with open(json_path) as f:
                 data = json.load(f)
 
-            # Создаём Солнце
+        
             sun = self.create_physical_object(data['sun'])
             self.objects.append(sun)
 
-            # Создаём планеты и их спутники
+            
             for planet_name, planet_data in data.get('planets', {}).items():
                 planet = self.create_physical_object(planet_data)
                 self.objects.append(planet)
                 planet.gravitation_influences.append(sun)
                 sun.gravitation_influences.append(planet)
 
-                # Обрабатываем спутники
+                
                 for moon_name, moon_data in planet_data.get('satellites', {}).items():
                     moon = self.create_moon_object(moon_data, planet)
                     self.objects.append(moon)
@@ -125,8 +126,8 @@ class MainWidget(QWidget):
         for obj in self.objects:
             obj.update_pos(current_time, self.time_acceleration)
 
-        # Сохраняем траекторию Земли (для примера)
-        if len(self.objects) > 1:  # Земля обычно второй объект
+        
+        if len(self.objects) > 1: 
             self.update_trajectory(self.objects[1])
 
         self.update()
@@ -139,41 +140,31 @@ class MainWidget(QWidget):
 
     def paintEvent(self, event):
         painter = QPainter(self)
-        self.camera.apply_transform(painter)
         self.draw_all_objects(painter)
         painter.end()
 
     def draw_all_objects(self, painter):
-        center = QPointF(self.width() / 2, self.height() / 2)
-        base_scale = min(self.width(), self.height()) / 3_000_000_000_00
-        
-        # Применяем масштаб камеры
-        effective_scale = base_scale * self.camera.scale
-
+        # Применяем трансформации камеры
+        painter.translate(self.center_screen)
+        painter.scale(self.camera.scale, self.camera.scale)
+        painter.translate(self.camera.offset)
         # Рисуем траекторию
         if len(self.trajectory) > 1:
             painter.setPen(QColor(100, 100, 255, 150))
-            points = [QPointF(
-                center.x() + x * effective_scale,
-                center.y() + y * effective_scale
-            ) for x, y in self.trajectory]
+            points = [QPointF(x, y) for x, y in self.trajectory]
             painter.drawPolyline(QPolygonF(points))
 
         # Рисуем все объекты
         for obj in self.objects:
-            self.draw_object(painter, obj, center, effective_scale)
+            self.draw_object(painter, obj)
 
-    def draw_object(self, painter, obj, center, scale):
+    def draw_object(self, painter, obj):
         pos = obj.get_position()
-        screen_pos = QPointF(
-            center.x() + pos[0] * scale,
-            center.y() + pos[1] * scale
-        )
-
-        size = max(2, obj.radius**(1/3) / 20 * self.camera.scale)
+        size = max(2, obj.radius * 1000 ** 1/13)
+        
         rect = QRectF(
-            screen_pos.x() - size / 2,
-            screen_pos.y() - size / 2,
+            pos[0] - size / 2,
+            pos[1] - size / 2,
             size, size
         )
 

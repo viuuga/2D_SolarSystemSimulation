@@ -31,6 +31,7 @@
     <Folder Include="SolarSystem_0_1\data\physical objects\" />
     <Folder Include="SolarSystem_0_1\my_math\" />
     <Folder Include="SolarSystem_0_1\my_math\__pycache__\" />
+    <Folder Include="SolarSystem_0_1\interface\" />
     <Folder Include="SolarSystem_0_1\view\" />
     <Folder Include="SolarSystem_0_1\space_objects\" />
     <Folder Include="SolarSystem_0_1\space_objects\__pycache__\" />
@@ -45,6 +46,7 @@
     <Content Include="SolarSystem_0_1\textures\none_texture.png" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SolarSystem_0_1\interface\SpeedSlider.py" />
     <Compile Include="SolarSystem_0_1\MainApp.py" />
     <Compile Include="SolarSystem_0_1\MainWidget.py" />
     <Compile Include="SolarSystem_0_1\my_math\m_f_file.py" />
