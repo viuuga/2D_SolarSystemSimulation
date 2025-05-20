@@ -10,11 +10,11 @@ class SpeedWidget(QWidget):
         control_layout = QHBoxLayout()
         self.setLayout(control_layout)
 
-        self.speed_label = QLabel("speed: 10000x")
+        self.speed_label = QLabel("speed: 1x")
         self.speed_slider = QSlider(Qt.Horizontal)
         self.speed_slider.setMinimum(1)
-        self.speed_slider.setMaximum(1000000)
-        self.speed_slider.setValue(10000)
+        self.speed_slider.setMaximum(400000)
+        self.speed_slider.setValue(1)
         self.speed_slider.setFixedWidth(200)
         self.speed_slider.valueChanged.connect(self.update_simulation_speed)
 

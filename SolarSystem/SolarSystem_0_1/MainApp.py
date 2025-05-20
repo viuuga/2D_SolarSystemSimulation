@@ -5,7 +5,7 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget,
 
 from MainWidget import MainWidget
 from interface.SpeedSlider import SpeedWidget
-
+from interface.ObjectsPanel import ObjectsPanel
 
 
 class MainApp(QMainWindow):
@@ -17,6 +17,9 @@ class MainApp(QMainWindow):
         
         self.mainWidget = MainWidget(self)
         self.setCentralWidget(self.mainWidget)
+        
+        # Инициализация панели объектов
+        self.objects_panel = ObjectsPanel(self)
         
         self.add_menu_and_controls()
 
@@ -30,6 +33,10 @@ class MainApp(QMainWindow):
         file_menu.addAction("Настройки")
         file_menu.addAction("Выход")
         
+        # Добавляем действие для панели объектов
+        objects_action = file_menu.addAction("Объекты")
+        objects_action.triggered.connect(self.objects_panel.toggle_panel)
+        
         self.control_widget = SpeedWidget(self)
         self.control_widget.speed_changed.connect(self.handle_speed_change)
         
@@ -41,6 +48,11 @@ class MainApp(QMainWindow):
 
     def handle_speed_change(self, value):
         self.mainWidget.time_acceleration = value
+    
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        if hasattr(self, 'objects_panel'):
+            self.objects_panel.setFixedHeight(self.height())
 
 
 if __name__ == "__main__":

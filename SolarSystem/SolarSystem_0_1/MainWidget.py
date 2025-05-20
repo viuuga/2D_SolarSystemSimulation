@@ -1,24 +1,24 @@
 from PySide6.QtCore import QTimer, QPointF, QRectF, QElapsedTimer, Qt
 from PySide6.QtGui import QPainter, QColor, QPixmap, QPolygonF
 from PySide6.QtWidgets import QWidget
-import json
 import numpy as np
 from space_objects.physicalObject import PhysicalObject
 from view.Camera import Camera
+from data.LoaderData import Loader
 
 
 class MainWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.camera = Camera()
+        self.loader = Loader()
         self.setup_simulation()
         self.setup_visuals()
-        self.load_solar_system("SolarSystem_0_1/data/SolarSystem.json")
-
+        
     def setup_simulation(self):
         self.time_acceleration = 1.0
         self.trajectory = []
-        self.objects = []
+        self.objects = self.loader.objects
 
         self.simulation_timer = QTimer(self)
         self.simulation_timer.timeout.connect(self.update_positions)
@@ -65,60 +65,7 @@ class MainWidget(QWidget):
         self.update()
 
 
-    def load_solar_system(self, json_path):
-        try:
-            with open(json_path) as f:
-                data = json.load(f)
-
-        
-            sun = self.create_physical_object(data['sun'])
-            self.objects.append(sun)
-
-            
-            for planet_name, planet_data in data.get('planets', {}).items():
-                planet = self.create_physical_object(planet_data)
-                self.objects.append(planet)
-                planet.gravitation_influences.append(sun)
-                sun.gravitation_influences.append(planet)
-
-                
-                for moon_name, moon_data in planet_data.get('satellites', {}).items():
-                    moon = self.create_moon_object(moon_data, planet)
-                    self.objects.append(moon)
-                    moon.gravitation_influences.extend([planet, sun])
-                    planet.gravitation_influences.append(moon)
-
-        except Exception as e:
-            print(f"Error loading solar system: {e}")
-
-    def create_physical_object(self, obj_data):
-        return PhysicalObject(
-            x=obj_data['x'],
-            y=obj_data['y'],
-            z=obj_data.get('z', 0),
-            velocity=np.array(obj_data['velocity']),
-            mass=obj_data['mass'],
-            texture_path=obj_data['texture'],
-            radius=obj_data['radius']
-        )
-
-    def create_moon_object(self, moon_data, parent_planet):
-        # Позиция спутника относительно планеты
-        offset = np.array(moon_data['offset'])
-        position = parent_planet.position + offset
-
-        # Скорость спутника = скорость планеты + орбитальная скорость
-        velocity = parent_planet.velocity + np.array(moon_data['velocity'])
-
-        return PhysicalObject(
-            x=position[0],
-            y=position[1],
-            z=position[2],
-            velocity=velocity,
-            mass=moon_data['mass'],
-            texture_path=moon_data['texture'],
-            radius=moon_data['radius']
-        )
+    
 
     def update_positions(self):
         current_time = self.elapsed_timer.elapsed() / 1000.0  # В секундах
