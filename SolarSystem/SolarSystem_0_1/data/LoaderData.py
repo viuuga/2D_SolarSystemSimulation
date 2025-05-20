@@ -5,14 +5,16 @@ from space_objects.physicalObject import PhysicalObject
 
 class Loader():
     
-    def __init__(self, path: str = "SolarSystem_0_1/data/SolarSystem.json"):
+    def __init__(self, path: str = None):
         self.objects = []
-        self.path = path
+        if path == None:
+            self.path = "SolarSystem_0_1/data/SolarSystem.json"
+        else: self.path = path
         self.load_solar_system()
 
     def load_solar_system(self):
         try:
-            with open(self.path) as f:
+            with open(self.path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
 
         
@@ -44,7 +46,8 @@ class Loader():
             velocity=np.array(obj_data['velocity']),
             mass=obj_data['mass'],
             texture_path=obj_data['texture'],
-            radius=obj_data['radius']
+            radius=obj_data['radius'],
+            name=obj_data['name']
         )
 
     def create_moon_object(self, moon_data, parent_planet):
@@ -62,7 +65,8 @@ class Loader():
             velocity=velocity,
             mass=moon_data['mass'],
             texture_path=moon_data['texture'],
-            radius=moon_data['radius']
+            radius=moon_data['radius'],
+            name=moon_data['name']
         )
 
 

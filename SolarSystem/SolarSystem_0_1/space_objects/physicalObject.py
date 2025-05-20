@@ -19,18 +19,22 @@ class PhysicalObject:
         z: float,   #метры
         velocity: np.ndarray,  # [vx, vy, vz]
         mass: float,   #килограммы
+        name: str = "",
         texture_path: str = "SolarSystem_0_1/textures/none_texture.png",
         radius: int = 10000000000,  #метры
     ):
+        self.name = name
         self.position = np.array([x, y, z], dtype=float)
         self.velocity = np.array(velocity, dtype=float)
         self.mass = mass
         self.acceleration = np.zeros(3)  # 3D ускорение
 
         self.last_update_time = 0.0
+        self.texture_path = texture_path
         self.texture = QPixmap(texture_path)
         if self.texture.isNull():
             self.texture = QPixmap("SolarSystem_0_1/textures/none_texture.png")
+            self.texture_path = "SolarSystem_0_1/textures/none_texture.png"
 
         self.gravitation_influences: List[PhysicalObject] = []
         self.radius = radius

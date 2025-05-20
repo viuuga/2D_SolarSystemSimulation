@@ -1,9 +1,10 @@
 {
   "sun": {
+    "name": "солнце",
     "x": 0,
     "y": 0,
     "z": 0,
-    "velocity": [0, 0, 0],
+    "velocity": [ 0, 0, 0 ],
     "mass": 1.989e30,
     "radius": 696340000,
     "texture": "SolarSystem_0_1/textures/sun.png",
@@ -11,6 +12,7 @@
   },
   "planets": {
     "mercury": {
+      "name": "меркурий",
       "x": 57.9e9,
       "y": 0,
       "z": 0,
@@ -21,6 +23,7 @@
       "type": "planet"
     },
     "venus": {
+      "name": "венера",
       "x": 108.2e9,
       "y": 0,
       "z": 0,
@@ -31,6 +34,7 @@
       "type": "planet"
     },
     "earth": {
+      "name": "земля",
       "x": 149.6e9,
       "y": 0,
       "z": 0,
@@ -41,6 +45,7 @@
       "type": "planet",
       "satellites": {
         "moon": {
+          "name": "земля - луна",
           "offset": [ 384.4e6, 0, 0 ],
           "velocity": [ 0, 1.022e3, 0 ],
           "mass": 7.342e22,

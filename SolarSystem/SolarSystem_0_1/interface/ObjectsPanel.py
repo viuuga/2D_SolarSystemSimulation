@@ -3,10 +3,14 @@
 from PySide6.QtCore import QPropertyAnimation, QEasingCurve, Qt, QPoint
 from PySide6.QtGui import QIcon
 
+from data.LoaderData import Loader
+from space_objects.physicalObject import PhysicalObject
+
 class ObjectsPanel(QFrame):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, filePath: str = None):
         super().__init__(parent)
         self.parent = parent
+        self.loader = Loader(filePath)
         self.setup_ui()
         self.setup_animation()
         
@@ -14,7 +18,6 @@ class ObjectsPanel(QFrame):
         self.setFrameShape(QFrame.StyledPanel)
         self.setFixedWidth(200)
         self.setStyleSheet("""
-            background-color: #f0f0f0;
             border-right: 1px solid #ccc;
         """)
         
@@ -25,7 +28,7 @@ class ObjectsPanel(QFrame):
         # Заголовок и кнопка закрытия
         header = QWidget()
         header_layout = QHBoxLayout(header)
-        header_layout.setContentsMargins(0, 0, 0, 0)
+        header_layout.setContentsMargins(0, 20, 0, 0)
         
         self.title_label = QLabel("Объекты")
         self.title_label.setStyleSheet("font-weight: bold; font-size: 14px;")
@@ -74,13 +77,10 @@ class ObjectsPanel(QFrame):
         self.hide_panel(immediate=True)
         
     def add_sample_objects(self):
-        objects = [
-            ("Солнце", ":/icons/sun.png"),
-            ("Меркурий", ":/icons/mercury.png"),
-            ("Венера", ":/icons/venus.png"),
-            ("Земля", ":/icons/earth.png"),
-            # Добавьте другие объекты по аналогии
-        ]
+        objects = []
+        for object in self.loader.objects:
+            new_object = (object.name, object.texture_path)
+            objects.append(new_object)
         
         for name, icon_path in objects:
             item = QListWidgetItem(QIcon(icon_path), name)

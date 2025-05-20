@@ -8,10 +8,10 @@ from data.LoaderData import Loader
 
 
 class MainWidget(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, filePath: str = None):
         super().__init__(parent)
         self.camera = Camera()
-        self.loader = Loader()
+        self.loader = Loader(filePath)
         self.setup_simulation()
         self.setup_visuals()
         
