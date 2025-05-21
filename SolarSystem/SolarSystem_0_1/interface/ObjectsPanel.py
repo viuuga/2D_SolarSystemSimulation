@@ -1,12 +1,14 @@
 ﻿from PySide6.QtWidgets import (QScrollArea, QVBoxLayout, QPushButton, 
                               QListWidget, QListWidgetItem, QFrame, QLabel, QWidget, QHBoxLayout)
-from PySide6.QtCore import QPropertyAnimation, QEasingCurve, Qt, QPoint
+from PySide6.QtCore import QPropertyAnimation, QEasingCurve, Qt, QPoint, Signal
 from PySide6.QtGui import QIcon
 
 from data.LoaderData import Loader
 from space_objects.physicalObject import PhysicalObject
 
 class ObjectsPanel(QFrame):
+    object_changed = Signal(str)
+
     def __init__(self, parent=None, filePath: str = None):
         super().__init__(parent)
         self.parent = parent
@@ -77,21 +79,16 @@ class ObjectsPanel(QFrame):
         self.hide_panel(immediate=True)
         
     def add_sample_objects(self):
-        objects = []
         for object in self.loader.objects:
-            new_object = (object.name, object.texture_path)
-            objects.append(new_object)
-        
-        for name, icon_path in objects:
-            item = QListWidgetItem(QIcon(icon_path), name)
+            item = QListWidgetItem(QIcon(object.texture_path), object.name)
             item.setFlags(item.flags() | Qt.ItemIsEnabled | Qt.ItemIsSelectable)
             self.objects_list.addItem(item)
+        
         
         self.objects_list.itemClicked.connect(self.on_object_clicked)
     
     def on_object_clicked(self, item):
-        print(f"Объект выбран: {item.text()}")
-        # Здесь можно добавить логику взаимодействия с главным виджетом
+        self.object_changed.emit(item.text())
         
     def toggle_panel(self):
         if self.x() < 0:

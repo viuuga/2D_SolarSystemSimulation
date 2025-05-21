@@ -1,17 +1,22 @@
-from PySide6.QtCore import QTimer, QPointF, QRectF, QElapsedTimer, Qt
-from PySide6.QtGui import QPainter, QColor, QPixmap, QPolygonF
+from PySide6.QtCore import QPoint, QTimer, QPointF, QRectF, QElapsedTimer, Qt
+from PySide6.QtGui import QPainter, QColor, QPixmap, QPolygonF, QPen
 from PySide6.QtWidgets import QWidget
 import numpy as np
 from space_objects.physicalObject import PhysicalObject
 from view.Camera import Camera
 from data.LoaderData import Loader
-
+from my_math.Point import Point
+from my_math.PhysicsEngine import PhysicsEngine
+from multiprocessing import Pool, cpu_count
 
 class MainWidget(QWidget):
     def __init__(self, parent=None, filePath: str = None):
         super().__init__(parent)
         self.camera = Camera()
         self.loader = Loader(filePath)
+        self.pool = Pool(processes=cpu_count()) 
+        self.orbits = {}
+        self.show_full_orbits = True
         self.setup_simulation()
         self.setup_visuals()
         
@@ -19,14 +24,17 @@ class MainWidget(QWidget):
         self.time_acceleration = 1.0
         self.trajectory = []
         self.objects = self.loader.objects
+        self.foloving_object_text = None
+        self.foloving_object = None
 
         self.simulation_timer = QTimer(self)
         self.simulation_timer.timeout.connect(self.update_positions)
-        self.simulation_timer.start(10)
+        self.simulation_timer.start(3)
 
         self.elapsed_timer = QElapsedTimer()
         self.elapsed_timer.start()
         self.update_center_point()
+
 
     def resizeEvent(self, event):
         self.update_center_point()
@@ -46,6 +54,7 @@ class MainWidget(QWidget):
 
     def mouseMoveEvent(self, event):
         if self.camera.is_dragging:
+            self.foloving_object_text = None
             self.camera.drag(event.position().toPoint())
             self.update()
 
@@ -64,26 +73,35 @@ class MainWidget(QWidget):
         
         self.update()
 
-
-    
-
     def update_positions(self):
-        current_time = self.elapsed_timer.elapsed() / 1000.0  # В секундах
-
-        for obj in self.objects:
-            obj.update_pos(current_time, self.time_acceleration)
-
+        current_time = self.elapsed_timer.elapsed() / 1000.0
         
-        if len(self.objects) > 1: 
-            self.update_trajectory(self.objects[1])
+        if self.foloving_object_text is not None:
+            self.foloving_object = self.loader.objects_dict.get(self.foloving_object_text)
+            self.camera.offset = Point(-self.foloving_object.position[0], 
+                                     -self.foloving_object.position[1])
 
+        # Подготавливаем данные для процессов
+        tasks = [(obj.to_dict(), current_time, self.time_acceleration) 
+                for obj in self.objects]
+        
+        try:
+            results = self.pool.starmap(PhysicsEngine.update_position, tasks)
+            
+            # Обновляем объекты из результатов
+            for obj, result in zip(self.objects, results):
+                obj.from_dict(result)
+                
+        except Exception as e:
+            print(f"Parallel computation failed: {e}")
+            # Резервный последовательный расчет
+            for obj in self.objects:
+                data = PhysicsEngine.update_position(
+                    obj.to_dict(), current_time, self.time_acceleration
+                )
+                obj.from_dict(data)
+        
         self.update()
-
-    def update_trajectory(self, obj):
-        pos = obj.get_position()
-        self.trajectory.append((pos[0], pos[1]))  # Используем только X и Y для 2D отрисовки
-        if len(self.trajectory) > self.trajectory_length:
-            self.trajectory.pop(0)
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -91,27 +109,24 @@ class MainWidget(QWidget):
         painter.end()
 
     def draw_all_objects(self, painter):
+        print(f"{self.camera.offset}")
         # Применяем трансформации камеры
         painter.translate(self.center_screen)
         painter.scale(self.camera.scale, self.camera.scale)
-        painter.translate(self.camera.offset)
-        # Рисуем траекторию
-        if len(self.trajectory) > 1:
-            painter.setPen(QColor(100, 100, 255, 150))
-            points = [QPointF(x, y) for x, y in self.trajectory]
-            painter.drawPolyline(QPolygonF(points))
 
+ 
         # Рисуем все объекты
         for obj in self.objects:
             self.draw_object(painter, obj)
+        
 
     def draw_object(self, painter, obj):
         pos = obj.get_position()
         size = max(2, obj.radius * 1000 ** 1/13)
         
         rect = QRectF(
-            pos[0] - size / 2,
-            pos[1] - size / 2,
+            pos[0] + self.camera.offset.x - size / 2,
+            pos[1] + self.camera.offset.y - size / 2,
             size, size
         )
 
@@ -120,3 +135,8 @@ class MainWidget(QWidget):
         else:
             painter.setBrush(QColor(200, 200, 200))
             painter.drawEllipse(rect)
+
+    def closeEvent(self, event):
+        self.pool.close()
+        self.pool.join()
+        super().closeEvent(event)

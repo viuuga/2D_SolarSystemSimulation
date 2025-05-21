@@ -18,7 +18,6 @@ class MainApp(QMainWindow):
         self.mainWidget = MainWidget(self)
         self.setCentralWidget(self.mainWidget)
         
-        # Инициализация панели объектов
         self.objects_panel = ObjectsPanel(self)
         
         self.add_menu_and_controls()
@@ -33,9 +32,9 @@ class MainApp(QMainWindow):
         file_menu.addAction("Настройки")
         file_menu.addAction("Выход")
         
-        # Добавляем действие для панели объектов
         objects_action = file_menu.addAction("Объекты")
         objects_action.triggered.connect(self.objects_panel.toggle_panel)
+        self.objects_panel.object_changed.connect(self.handle_object_change)
         
         self.control_widget = SpeedWidget(self)
         self.control_widget.speed_changed.connect(self.handle_speed_change)
@@ -53,6 +52,10 @@ class MainApp(QMainWindow):
         super().resizeEvent(event)
         if hasattr(self, 'objects_panel'):
             self.objects_panel.setFixedHeight(self.height())
+
+    def handle_object_change(self, value):
+        print(f"Объект выбран: {value}")
+        self.mainWidget.foloving_object_text = value
 
 
 if __name__ == "__main__":

@@ -45,12 +45,203 @@
       "type": "planet",
       "satellites": {
         "moon": {
-          "name": "земля - луна",
+          "name": "луна",
           "offset": [ 384.4e6, 0, 0 ],
           "velocity": [ 0, 1.022e3, 0 ],
           "mass": 7.342e22,
           "radius": 1737400,
           "texture": "SolarSystem_0_1/textures/moon.png",
+          "type": "moon"
+        }
+      }
+    },
+    "mars": {
+      "name": "марс",
+      "x": 227.9e9,
+      "y": 0,
+      "z": 0,
+      "velocity": [ 0, 24.077e3, 0 ],
+      "mass": 6.417e23,
+      "radius": 3396200,
+      "texture": "SolarSystem_0_1/textures/mars.png",
+      "type": "planet",
+      "satellites": {
+        "phobos": {
+          "name": "фобос",
+          "offset": [ 9.377e6, 0, 0 ],
+          "velocity": [ 0, 2.138e3, 0 ],
+          "mass": 1.072e16,
+          "radius": 11267,
+          "texture": "SolarSystem_0_1/textures/phobos.png",
+          "type": "moon"
+        },
+        "deimos": {
+          "name": "деймос",
+          "offset": [ 23.46e6, 0, 0 ],
+          "velocity": [ 0, 1.351e3, 0 ],
+          "mass": 1.476e15,
+          "radius": 6200,
+          "texture": "SolarSystem_0_1/textures/deimos.png",
+          "type": "moon"
+        }
+      }
+    },
+    "jupiter": {
+      "name": "юпитер",
+      "x": 778.5e9,
+      "y": 0,
+      "z": 0,
+      "velocity": [ 0, 13.07e3, 0 ],
+      "mass": 1.899e27,
+      "radius": 71492000,
+      "texture": "SolarSystem_0_1/textures/jupiter.png",
+      "type": "gas_giant",
+      "satellites": {
+        "io": {
+          "name": "ио",
+          "offset": [ 421.7e6, 0, 0 ],
+          "velocity": [ 0, 17.334e3, 0 ],
+          "mass": 8.932e22,
+          "radius": 1821300,
+          "texture": "SolarSystem_0_1/textures/io.png",
+          "type": "moon"
+        },
+        "europa": {
+          "name": "европа",
+          "offset": [ 671.1e6, 0, 0 ],
+          "velocity": [ 0, 13.74e3, 0 ],
+          "mass": 4.8e22,
+          "radius": 1560800,
+          "texture": "SolarSystem_0_1/textures/europa.png",
+          "type": "moon"
+        },
+        "ganymede": {
+          "name": "ганимед",
+          "offset": [ 1.07e9, 0, 0 ],
+          "velocity": [ 0, 10.88e3, 0 ],
+          "mass": 1.482e23,
+          "radius": 2634100,
+          "texture": "SolarSystem_0_1/textures/ganymede.png",
+          "type": "moon"
+        },
+        "callisto": {
+          "name": "каллисто",
+          "offset": [ 1.883e9, 0, 0 ],
+          "velocity": [ 0, 8.204e3, 0 ],
+          "mass": 1.076e23,
+          "radius": 2410300,
+          "texture": "SolarSystem_0_1/textures/callisto.png",
+          "type": "moon"
+        }
+      }
+    },
+    "saturn": {
+      "name": "сатурн",
+      "x": 1.434e12,
+      "y": 0,
+      "z": 0,
+      "velocity": [ 0, 9.68e3, 0 ],
+      "mass": 5.685e26,
+      "radius": 60268000,
+      "texture": "SolarSystem_0_1/textures/saturn.png",
+      "type": "gas_giant",
+      "rings": {
+        "inner_radius": 66900e3,
+        "outer_radius": 140180e3,
+        "texture": "SolarSystem_0_1/textures/saturn_rings.png"
+      },
+      "satellites": {
+        "titan": {
+          "name": "титан",
+          "offset": [ 1.222e9, 0, 0 ],
+          "velocity": [ 0, 5.57e3, 0 ],
+          "mass": 1.345e23,
+          "radius": 2574700,
+          "texture": "SolarSystem_0_1/textures/titan.png",
+          "type": "moon"
+        },
+        "enceladus": {
+          "name": "энцелад",
+          "offset": [ 238.0e6, 0, 0 ],
+          "velocity": [ 0, 12.63e3, 0 ],
+          "mass": 1.08e20,
+          "radius": 252100,
+          "texture": "SolarSystem_0_1/textures/enceladus.png",
+          "type": "moon"
+        }
+      }
+    },
+    "uranus": {
+      "name": "уран",
+      "x": 2.871e12,
+      "y": 0,
+      "z": 0,
+      "velocity": [ 0, 6.8e3, 0 ],
+      "mass": 8.682e25,
+      "radius": 25559000,
+      "texture": "SolarSystem_0_1/textures/uranus.png",
+      "type": "ice_giant",
+      "satellites": {
+        "titania": {
+          "name": "титания",
+          "offset": [ 436.3e6, 0, 0 ],
+          "velocity": [ 0, 3.64e3, 0 ],
+          "mass": 3.4e21,
+          "radius": 788400,
+          "texture": "SolarSystem_0_1/textures/titania.png",
+          "type": "moon"
+        },
+        "oberon": {
+          "name": "оберон",
+          "offset": [ 583.5e6, 0, 0 ],
+          "velocity": [ 0, 3.15e3, 0 ],
+          "mass": 3.1e21,
+          "radius": 761400,
+          "texture": "SolarSystem_0_1/textures/oberon.png",
+          "type": "moon"
+        }
+      }
+    },
+    "neptune": {
+      "name": "нептун",
+      "x": 4.495e12,
+      "y": 0,
+      "z": 0,
+      "velocity": [ 0, 5.43e3, 0 ],
+      "mass": 1.024e26,
+      "radius": 24764000,
+      "texture": "SolarSystem_0_1/textures/neptune.png",
+      "type": "ice_giant",
+      "satellites": {
+        "triton": {
+          "name": "тритон",
+          "offset": [ 354.8e6, 0, 0 ],
+          "velocity": [ 0, 4.39e3, 0 ],
+          "mass": 2.14e22,
+          "radius": 1353400,
+          "texture": "SolarSystem_0_1/textures/triton.png",
+          "type": "moon"
+        }
+      }
+    },
+    "pluto": {
+      "name": "плутон",
+      "x": 5.906e12,
+      "y": 0,
+      "z": 0,
+      "velocity": [ 0, 4.67e3, 0 ],
+      "mass": 1.303e22,
+      "radius": 1188300,
+      "texture": "SolarSystem_0_1/textures/pluto.png",
+      "type": "dwarf_planet",
+      "satellites": {
+        "charon": {
+          "name": "харон",
+          "offset": [ 17.536e6, 0, 0 ],
+          "velocity": [ 0, 0.21e3, 0 ],
+          "mass": 1.586e21,
+          "radius": 606000,
+          "texture": "SolarSystem_0_1/textures/charon.png",
           "type": "moon"
         }
       }

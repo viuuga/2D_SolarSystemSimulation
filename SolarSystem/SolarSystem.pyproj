@@ -52,6 +52,8 @@
     <Compile Include="SolarSystem_0_1\MainApp.py" />
     <Compile Include="SolarSystem_0_1\MainWidget.py" />
     <Compile Include="SolarSystem_0_1\my_math\m_f_file.py" />
+    <Compile Include="SolarSystem_0_1\my_math\PhysicsEngine.py" />
+    <Compile Include="SolarSystem_0_1\my_math\Point.py" />
     <Compile Include="SolarSystem_0_1\space_objects\physicalObject.py" />
     <Compile Include="SolarSystem_0_1\view\Camera.py" />
   </ItemGroup>

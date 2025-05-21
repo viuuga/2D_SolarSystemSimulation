@@ -7,6 +7,7 @@ class Loader():
     
     def __init__(self, path: str = None):
         self.objects = []
+        self.objects_dict = {}
         if path == None:
             self.path = "SolarSystem_0_1/data/SolarSystem.json"
         else: self.path = path
@@ -20,11 +21,13 @@ class Loader():
         
             sun = self.create_physical_object(data['sun'])
             self.objects.append(sun)
+            self.objects_dict[sun.name] = sun
 
             
             for planet_name, planet_data in data.get('planets', {}).items():
                 planet = self.create_physical_object(planet_data)
                 self.objects.append(planet)
+                self.objects_dict[planet.name] = planet
                 planet.gravitation_influences.append(sun)
                 sun.gravitation_influences.append(planet)
 
@@ -32,6 +35,7 @@ class Loader():
                 for moon_name, moon_data in planet_data.get('satellites', {}).items():
                     moon = self.create_moon_object(moon_data, planet)
                     self.objects.append(moon)
+                    self.objects_dict[moon.name] = moon
                     moon.gravitation_influences.extend([planet, sun])
                     planet.gravitation_influences.append(moon)
 
