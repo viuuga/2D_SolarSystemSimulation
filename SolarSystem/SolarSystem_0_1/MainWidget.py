@@ -17,6 +17,7 @@ class MainWidget(QWidget):
         self.pool = Pool(processes=cpu_count()) 
         self.orbits = {}
         self.show_full_orbits = True
+        self.count = 0
         self.setup_simulation()
         self.setup_visuals()
         
@@ -34,7 +35,6 @@ class MainWidget(QWidget):
         self.elapsed_timer = QElapsedTimer()
         self.elapsed_timer.start()
         self.update_center_point()
-
 
     def resizeEvent(self, event):
         self.update_center_point()
@@ -75,31 +75,30 @@ class MainWidget(QWidget):
 
     def update_positions(self):
         current_time = self.elapsed_timer.elapsed() / 1000.0
+        self.count += 1
         
         if self.foloving_object_text is not None:
             self.foloving_object = self.loader.objects_dict.get(self.foloving_object_text)
-            self.camera.offset = Point(-self.foloving_object.position[0], 
-                                     -self.foloving_object.position[1])
+            self.camera.offset = Point(-self.foloving_object.position[0], -self.foloving_object.position[1])
 
-        # Подготавливаем данные для процессов
-        tasks = [(obj.to_dict(), current_time, self.time_acceleration) 
-                for obj in self.objects]
+        tasks = [(obj.to_dict(), current_time, self.time_acceleration) for obj in self.objects]
         
         try:
             results = self.pool.starmap(PhysicsEngine.update_position, tasks)
-            
-            # Обновляем объекты из результатов
             for obj, result in zip(self.objects, results):
                 obj.from_dict(result)
                 
         except Exception as e:
             print(f"Parallel computation failed: {e}")
-            # Резервный последовательный расчет
             for obj in self.objects:
                 data = PhysicsEngine.update_position(
                     obj.to_dict(), current_time, self.time_acceleration
                 )
                 obj.from_dict(data)
+
+        if self.count % 3 == 0:
+            for object in self.objects:
+                object.orbit_history.append(object.position.copy())
         
         self.update()
 
@@ -109,24 +108,51 @@ class MainWidget(QWidget):
         painter.end()
 
     def draw_all_objects(self, painter):
-        print(f"{self.camera.offset}")
-        # Применяем трансформации камеры
         painter.translate(self.center_screen)
-        painter.scale(self.camera.scale, self.camera.scale)
 
- 
-        # Рисуем все объекты
+        if self.show_full_orbits:
+            self.draw_orbits(painter)
+
         for obj in self.objects:
             self.draw_object(painter, obj)
+
+    def draw_orbits(self, painter):
+        """Оптимизированная отрисовка орбит"""
+        if not self.show_full_orbits:
+            return
         
+        # Общие настройки пера
+        base_pen = QPen()
+        base_pen.setWidthF(1.0)
+    
+        for obj in self.objects:
+            if len(obj.orbit_history) < 2:
+                continue
+
+            base_pen.setColor(obj.orbit_color)
+            painter.setPen(base_pen)
+        
+            step = max(1, len(obj.orbit_history) // 1000)
+            points = QPolygonF()
+            for i in range(0, len(obj.orbit_history), step):
+                pos = obj.orbit_history[i]
+                points.append(QPointF(
+                    (pos[0] + self.camera.offset.x) * self.camera.scale,
+                    (pos[1] + self.camera.offset.y) * self.camera.scale
+                ))
+        
+            if points.size() >= 2:
+                painter.drawPolyline(points)
 
     def draw_object(self, painter, obj):
+        """Оптимизированная отрисовка объектов"""
         pos = obj.get_position()
-        size = max(2, obj.radius * 1000 ** 1/13)
+        size = (obj.radius * 3200 ** (1/19) * self.camera.scale)
+   
         
         rect = QRectF(
-            pos[0] + self.camera.offset.x - size / 2,
-            pos[1] + self.camera.offset.y - size / 2,
+            (pos[0] + self.camera.offset.x - size / 2) * self.camera.scale,
+            (pos[1] + self.camera.offset.y - size / 2) * self.camera.scale,
             size, size
         )
 
@@ -136,7 +162,7 @@ class MainWidget(QWidget):
             painter.setBrush(QColor(200, 200, 200))
             painter.drawEllipse(rect)
 
-    def closeEvent(self, event):
-        self.pool.close()
-        self.pool.join()
-        super().closeEvent(event)
+        def closeEvent(self, event):
+            self.pool.close()
+            self.pool.join()
+            super().closeEvent(event)

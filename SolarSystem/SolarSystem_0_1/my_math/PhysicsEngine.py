@@ -1,14 +1,13 @@
 ﻿import numpy as np
 from typing import List
 
-G = 6.67430e-11  # Гравитационная постоянная
+G = 6.67418478787878e-11
 
 class PhysicsEngine:
     @staticmethod
     def calculate_gravity(position: np.ndarray, mass: float, 
                          other_positions: List[np.ndarray], 
                          other_masses: List[float]) -> np.ndarray:
-        """Вычисляет гравитационное ускорение"""
         r_vecs = np.array(other_positions) - position
         distances = np.linalg.norm(r_vecs, axis=1)
         
@@ -27,13 +26,12 @@ class PhysicsEngine:
     @staticmethod
     def update_position(obj_data: dict, current_time: float, 
                        time_acceleration: float) -> dict:
-        """Обновляет позицию и скорость объекта"""
         delta_time = (current_time - obj_data['last_update_time']) * time_acceleration
         
         if delta_time <= 0:
             return obj_data
             
-        max_substep = 100  # Максимальный подшаг в секундах
+        max_substep = 100
         n_substeps = max(1, int(delta_time / max_substep))
         substep = delta_time / n_substeps
         
