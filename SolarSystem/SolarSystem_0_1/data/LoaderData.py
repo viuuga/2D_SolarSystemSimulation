@@ -1,4 +1,5 @@
-import json
+п»їimport json
+from os import name
 import numpy as np
 from space_objects.physicalObject import PhysicalObject
 
@@ -19,13 +20,13 @@ class Loader():
                 data = json.load(f)
 
         
-            sun = self.create_physical_object(data['sun'])
+            sun = self.create_physical_object(data['sun'], "")
             self.objects.append(sun)
             self.objects_dict[sun.name] = sun
 
             
             for planet_name, planet_data in data.get('planets', {}).items():
-                planet = self.create_physical_object(planet_data)
+                planet = self.create_physical_object(planet_data, sun.name)
                 self.objects.append(planet)
                 self.objects_dict[planet.name] = planet
                 planet.gravitation_influences.append(sun)
@@ -42,7 +43,7 @@ class Loader():
         except Exception as e:
             print(f"Error loading solar system: {e}")
 
-    def create_physical_object(self, obj_data):
+    def create_physical_object(self, obj_data, center_name):
         return PhysicalObject(
             x=obj_data['x'],
             y=obj_data['y'],
@@ -51,15 +52,18 @@ class Loader():
             mass=obj_data['mass'],
             texture_path=obj_data['texture'],
             radius=obj_data['radius'],
-            name=obj_data['name']
+            name=obj_data['name'],
+            center_name=center_name,
+            obType=obj_data['type'],
+            pregen_points=obj_data['orbit_points']            
         )
 
     def create_moon_object(self, moon_data, parent_planet):
-        # Позиция спутника относительно планеты
+        # РџРѕР·РёС†РёСЏ СЃРїСѓС‚РЅРёРєР° РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ РїР»Р°РЅРµС‚С‹
         offset = np.array(moon_data['offset'])
         position = parent_planet.position + offset
 
-        # Скорость спутника = скорость планеты + орбитальная скорость
+        # РЎРєРѕСЂРѕСЃС‚СЊ СЃРїСѓС‚РЅРёРєР° = СЃРєРѕСЂРѕСЃС‚СЊ РїР»Р°РЅРµС‚С‹ + РѕСЂР±РёС‚Р°Р»СЊРЅР°СЏ СЃРєРѕСЂРѕСЃС‚СЊ
         velocity = parent_planet.velocity + np.array(moon_data['velocity'])
 
         return PhysicalObject(
@@ -70,7 +74,9 @@ class Loader():
             mass=moon_data['mass'],
             texture_path=moon_data['texture'],
             radius=moon_data['radius'],
-            name=moon_data['name']
+            name=moon_data['name'],
+            center_name=parent_planet.name,
+            obType=moon_data['type']
         )
 
 

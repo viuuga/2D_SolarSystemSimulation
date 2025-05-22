@@ -1,8 +1,8 @@
+from tkinter import CENTER
 from typing import List
 
 import numpy as np
 
-from my_math.m_f_file import Vector2d
 import math
 
 from PySide6.QtGui import QColor
@@ -15,10 +15,19 @@ from collections import deque
 G = 6.67430e-11  # Гравитационная постоянная (Н·м²/кг²)
 
 class PhysicalObject:
-    def __init__(self, x: float, y: float, z: float, 
-                 velocity: np.ndarray, mass: float, name: str = "",
+    def __init__(self, 
+                 x: float, 
+                 y: float, 
+                 z: float, 
+                 velocity: np.ndarray, 
+                 mass: float, 
+                 name: str = "",
                  texture_path: str = "SolarSystem_0_1/textures/none_texture.png", 
-                 radius: int = 10000000000):
+                 radius: int = 10000000000,
+                 center_name: str = "",
+                 obType: str = "",
+                 pregen_points = []
+                 ):
         self.name = name
         self.position = np.array([x, y, z], dtype=float)
         self.velocity = np.array(velocity, dtype=float)
@@ -31,7 +40,11 @@ class PhysicalObject:
         self.gravitation_influences = []
         self.radius = radius
         self.orbit_history = deque(maxlen=100)
+        self.orbit_points = deque(pregen_points, maxlen=3)
         self.orbit_color = self._generate_orbit_color()
+        self.is_simulate_orbit = True
+        self.center_name = center_name
+        self.obType = obType
 
     @property
     def texture(self):
@@ -48,7 +61,6 @@ class PhysicalObject:
         return self.mass
 
     def to_dict(self):
-        """Конвертирует объект в словарь для передачи в процессы"""
         return {
             'position': self.position.tolist(),
             'velocity': self.velocity.tolist(),
@@ -66,7 +78,6 @@ class PhysicalObject:
         }
 
     def from_dict(self, data: dict):
-        """Обновляет объект из словаря"""
         self.position = np.array(data['position'])
         self.velocity = np.array(data['velocity'])
         self.acceleration = np.array(data['acceleration'])

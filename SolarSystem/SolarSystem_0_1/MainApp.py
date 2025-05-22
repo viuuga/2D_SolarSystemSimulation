@@ -3,9 +3,10 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget,
                                QHBoxLayout, QLabel, QSlider, QMenuBar,
                                QSizePolicy)
 
-from MainWidget import MainWidget
+
 from interface.SpeedSlider import SpeedWidget
 from interface.ObjectsPanel import ObjectsPanel
+from mainWidget.MainWidget import MainWidget
 
 
 class MainApp(QMainWindow):
@@ -46,16 +47,15 @@ class MainApp(QMainWindow):
         self.setMenuWidget(menu_container)
 
     def handle_speed_change(self, value):
-        self.mainWidget.time_acceleration = value
+        self.mainWidget.simulation_engine.time_acceleration = value
     
     def resizeEvent(self, event):
         super().resizeEvent(event)
-        if hasattr(self, 'objects_panel'):
-            self.objects_panel.setFixedHeight(self.height())
+        self.objects_panel.setFixedHeight(self.height())
 
     def handle_object_change(self, value):
         print(f"Объект выбран: {value}")
-        self.mainWidget.foloving_object_text = value
+        self.mainWidget.simulation_engine.following_object_text = value
 
 
 if __name__ == "__main__":

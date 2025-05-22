@@ -32,7 +32,9 @@
     <Folder Include="SolarSystem_0_1\my_math\" />
     <Folder Include="SolarSystem_0_1\my_math\__pycache__\" />
     <Folder Include="SolarSystem_0_1\interface\" />
-    <Folder Include="SolarSystem_0_1\view\" />
+    <Folder Include="SolarSystem_0_1\mainWidget\" />
+    <Folder Include="SolarSystem_0_1\simulation\" />
+    <Folder Include="SolarSystem_0_1\renderers\" />
     <Folder Include="SolarSystem_0_1\space_objects\" />
     <Folder Include="SolarSystem_0_1\space_objects\__pycache__\" />
     <Folder Include="SolarSystem_0_1\textures\" />
@@ -50,12 +52,15 @@
     <Compile Include="SolarSystem_0_1\interface\SpeedSlider.py" />
     <Compile Include="SolarSystem_0_1\interface\ObjectsPanel.py" />
     <Compile Include="SolarSystem_0_1\MainApp.py" />
-    <Compile Include="SolarSystem_0_1\MainWidget.py" />
-    <Compile Include="SolarSystem_0_1\my_math\m_f_file.py" />
+    <Compile Include="SolarSystem_0_1\mainWidget\MainWidget.py" />
     <Compile Include="SolarSystem_0_1\my_math\PhysicsEngine.py" />
     <Compile Include="SolarSystem_0_1\my_math\Point.py" />
+    <Compile Include="SolarSystem_0_1\renderers\ObjectRenderer.py" />
+    <Compile Include="SolarSystem_0_1\renderers\OrbitRenderer.py" />
+    <Compile Include="SolarSystem_0_1\simulation\SimulationOrbit.py" />
+    <Compile Include="SolarSystem_0_1\simulation\SimulationEngine.py" />
     <Compile Include="SolarSystem_0_1\space_objects\physicalObject.py" />
-    <Compile Include="SolarSystem_0_1\view\Camera.py" />
+    <Compile Include="SolarSystem_0_1\simulation\Camera.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
