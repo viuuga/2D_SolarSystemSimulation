@@ -49,10 +49,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="SolarSystem_0_1\data\LoaderData.py" />
+    <Compile Include="SolarSystem_0_1\interface\SettingsPanel.py" />
     <Compile Include="SolarSystem_0_1\interface\SpeedSlider.py" />
     <Compile Include="SolarSystem_0_1\interface\ObjectsPanel.py" />
     <Compile Include="SolarSystem_0_1\MainApp.py" />
     <Compile Include="SolarSystem_0_1\mainWidget\MainWidget.py" />
+    <Compile Include="SolarSystem_0_1\my_math\Geometry.py" />
     <Compile Include="SolarSystem_0_1\my_math\PhysicsEngine.py" />
     <Compile Include="SolarSystem_0_1\my_math\Point.py" />
     <Compile Include="SolarSystem_0_1\renderers\ObjectRenderer.py" />

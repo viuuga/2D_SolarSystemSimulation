@@ -9,10 +9,10 @@ from space_objects.physicalObject import PhysicalObject
 class ObjectsPanel(QFrame):
     object_changed = Signal(str)
 
-    def __init__(self, parent=None, filePath: str = None):
+    def __init__(self, loader, parent=None):
         super().__init__(parent)
         self.parent = parent
-        self.loader = Loader(filePath)
+        self.loader = loader
         self.setup_ui()
         self.setup_animation()
         

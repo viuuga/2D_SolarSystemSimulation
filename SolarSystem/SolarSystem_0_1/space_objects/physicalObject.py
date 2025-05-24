@@ -20,6 +20,8 @@ class PhysicalObject:
                  y: float, 
                  z: float, 
                  velocity: np.ndarray, 
+                 central_vector: np.ndarray,
+                 center_orbit: np.ndarray,
                  mass: float, 
                  name: str = "",
                  texture_path: str = "SolarSystem_0_1/textures/none_texture.png", 
@@ -29,22 +31,33 @@ class PhysicalObject:
                  pregen_points = []
                  ):
         self.name = name
+
         self.position = np.array([x, y, z], dtype=float)
         self.velocity = np.array(velocity, dtype=float)
-        self.mass = mass
         self.acceleration = np.zeros(3)
         self.last_acceleration = np.zeros(3)
+
+        self.mass = mass
+        self.radius = radius
+
         self.last_update_time = 0.0
         self.texture_path = texture_path
         self._texture = None
-        self.gravitation_influences = []
-        self.radius = radius
-        self.orbit_history = deque(maxlen=100)
+        
+        self.orbit_history = deque(maxlen=110)
         self.orbit_points = deque(pregen_points, maxlen=3)
         self.orbit_color = self._generate_orbit_color()
+
         self.is_simulate_orbit = True
+        self.is_simulate_traectory = False
+        self.is_visibiliti = False
+
+        self.gravitation_influences = []
         self.center_name = center_name
         self.obType = obType
+
+        self.last_central_vector = central_vector
+        self.center_orbit = center_orbit
 
     @property
     def texture(self):

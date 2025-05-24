@@ -1,27 +1,26 @@
 from PySide6.QtCore import QPointF, Qt
 from PySide6.QtGui import QPolygonF, QPen, QColor, QPainterPath
-
+import numpy as np
 
 class OrbitRenderer:
-    def __init__(self, objects):
+    def __init__(self, objects, objects_dict):
         self.objects = objects
-        self.show_full_orbits = True
+        self.objects_dict = objects_dict
         self.ellipses_to_draw = {} 
         
-    def update_orbits(self, count):
-        if count % 3 == 0:
+    def update_orbits(self, count, time_acceleration):
+        delimater = 35 - 30 * time_acceleration // 400000
+        if count % delimater == 0:
             for obj in self.objects:
                 obj.orbit_history.append(obj.position.copy())
     
     def draw_orbits(self, painter, camera):
-        if not self.show_full_orbits:
-            return
         
         base_pen = QPen()
         base_pen.setWidthF(1.0)
         
         for obj in self.objects:
-            if len(obj.orbit_history) < 2:
+            if len(obj.orbit_history) < 2 or not obj.is_simulate_traectory:
                 continue
 
             base_pen.setColor(obj.orbit_color)
@@ -42,21 +41,26 @@ class OrbitRenderer:
         for name, ellipse in self.ellipses_to_draw.items():
             if not ellipse['points']:
                 continue
+            if not self.objects_dict.get(ellipse['object']).is_simulate_orbit:
+                continue
             
             painter.setPen(QPen(QColor(ellipse['color']), 1))
             painter.setBrush(Qt.NoBrush)
+
+
+            center = (np.array(self.objects_dict.get(ellipse['center_name']).position, dtype=np.float64) + np.array(self.objects_dict.get(ellipse['object']).center_orbit, dtype=float))
         
             path = QPainterPath()
             x, y = ellipse['points'][0]
             path.moveTo(
-                (x * 1e8 + camera.offset.x) * camera.scale,
-                (y * 1e8 + camera.offset.y) * camera.scale
+                (x * ellipse['scale'] + camera.offset.x + center[0]) * camera.scale,
+                (y * ellipse['scale'] + camera.offset.y + center[1]) * camera.scale
             )
         
             for x, y in ellipse['points'][1:]:
                 path.lineTo(
-                    (x * 1e8 + camera.offset.x) * camera.scale,
-                    (y * 1e8 + camera.offset.y) * camera.scale
+                    (x * ellipse['scale'] + camera.offset.x + center[0]) * camera.scale,
+                    (y * ellipse['scale'] + camera.offset.y + center[1]) * camera.scale
                 )
             
             painter.drawPath(path)

@@ -1,7 +1,7 @@
 ﻿import numpy as np
 from typing import List
 
-_temp_r_vecs = np.empty((20, 3))  # Предполагаем максимум 100 объектов
+_temp_r_vecs = np.empty((20, 3))
 _temp_distances_sq = np.empty(20)
 
 G = 6.67418478787878e-11
@@ -10,7 +10,6 @@ class PhysicsEngine:
     def calculate_gravity(position: np.ndarray, mass: float, 
                          other_positions: List[np.ndarray], 
                          other_masses: List[float]) -> np.ndarray:
-        # Преобразуем входные данные в массивы NumPy
         other_positions = np.array(other_positions)
         other_masses = np.array(other_masses)
     
@@ -32,11 +31,9 @@ class PhysicsEngine:
     @staticmethod
     def update_position(obj_data: dict, current_time: float, time_acceleration: float) -> dict:
         delta_time = (current_time - obj_data['last_update_time']) * time_acceleration
-    
-        if delta_time <= 0:
-            return obj_data
+        if delta_time > 2000:
+            delta_time = 2000
         
-        # Преобразуем гравитационные влияния в массивы NumPy один раз
         influences = obj_data['gravitation_influences']
         if influences:
             other_positions = np.array([inf['position'] for inf in influences])

@@ -5,12 +5,12 @@ from my_math.Point import Point
 from data.LoaderData import Loader
 
 class SimulationEngine:
-    def __init__(self, filePath, pool, camera):
+    def __init__(self,pool, camera, loader):
         self.pool = pool
         self.time_acceleration = 1.0
         self.following_object_text = None
         self.camera = camera
-        self.loader = Loader(filePath)
+        self.loader = loader
 
         self.elapsed_timer = QElapsedTimer()
         self.elapsed_timer.start()
