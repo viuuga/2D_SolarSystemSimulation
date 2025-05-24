@@ -1,4 +1,4 @@
-﻿from PySide6.QtCore import QTimer, QPointF, Qt
+﻿from PySide6.QtCore import QTimer, QPointF, Qt, QThread
 from PySide6.QtGui import QPainter
 from PySide6.QtWidgets import QWidget
 
@@ -13,17 +13,17 @@ from simulation.SimulationOrbit import SimulationOrbit
 class MainWidget(QWidget):
     def __init__(self, loader, parent=None):
         super().__init__(parent)
+        self.thread().setPriority(QThread.HighPriority)
 
         self.loader = loader
         self.camera = Camera()
         self.last_count = 0
         self.count = 0
-        self.main_processe_pool = Pool(processes = max(1, cpu_count() - 4))
-        self.background_processe_poll = Pool(processes = 1)
+        self.main_processe_pool = Pool(processes = 4)
         print(self.main_processe_pool)
-        print(self.background_processe_poll)
         
         self.simulation_engine = SimulationEngine(self.main_processe_pool, self.camera, self.loader)
+        self.simulation_engine.task_completed.connect(self.handle_positions_data)
         self.orbit_manager = OrbitRenderer(self.loader.objects, self.loader.objects_dict)
         self.orbit_simulator = SimulationOrbit(self.loader.objects, self.loader.objects_dict)
         self.orbit_simulator.task_completed.connect(self.handle_ellipse_data)
@@ -64,7 +64,8 @@ class MainWidget(QWidget):
         
     def update_simulation(self):
         self.count += 1
-        self.simulation_engine.update_positions()
+        if self.simulation_engine.is_shoud_update:
+            self.simulation_engine.update_positions2()
         self.orbit_manager.update_orbits(self.count, self.simulation_engine.time_acceleration)
         self.update()
         
@@ -82,9 +83,12 @@ class MainWidget(QWidget):
         painter.end()
 
     def debug_output(self):
-        print(f"fps: {self.count - self.last_count}")
+        print(f"sistem fps: {self.count - self.last_count}")
+        print(f"visualising fps: {self.simulation_engine.fps_count - self.simulation_engine.last_fps_count}")
+
         print(f"{self.camera.offset}")
         self.last_count = self.count
+        self.simulation_engine.last_fps_count = self.simulation_engine.fps_count
 
     def update_orbit(self):
         self.orbit_simulator.update_points2()
@@ -124,3 +128,5 @@ class MainWidget(QWidget):
             self.orbit_manager.ellipses_to_draw[key] = value
         self.update()
 
+    def handle_positions_data(self, data):
+        self.simulation_engine.is_shoud_update = data

@@ -2,7 +2,7 @@
 from os import name
 import numpy as np
 from space_objects.physicalObject import PhysicalObject
-
+from space_objects.physicalObject import PhysicalObject
 
 class Loader():
     
@@ -30,17 +30,19 @@ class Loader():
                 planet = self.create_physical_object(planet_data, sun.name)
                 self.objects.append(planet)
                 self.objects_dict[planet.name] = planet
-                planet.gravitation_influences.append(sun)
+                planet.add_gravitational_influence(sun)
                 if planet.mass > 5e24 and planet.position[0] < 3e12:
-                    sun.gravitation_influences.append(planet)
+                    sun.add_gravitational_influence(planet)
 
                 
                 for moon_name, moon_data in planet_data.get('satellites', {}).items():
                     moon = self.create_moon_object(moon_data, planet)
                     self.objects.append(moon)
                     self.objects_dict[moon.name] = moon
-                    moon.gravitation_influences.extend([planet, sun])
-                    planet.gravitation_influences.append(moon)
+                    moon.add_gravitational_influence(planet)
+                    moon.add_gravitational_influence(sun)
+                    
+                    planet.add_gravitational_influence(moon)
 
         except Exception as e:
             print(f"Error loading solar system: {e}")

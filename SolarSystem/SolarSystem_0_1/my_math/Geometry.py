@@ -13,8 +13,7 @@ def find_ellipse_center(points):
     x = points[:, 0]
     y = points[:, 1]
     
-    # Уравнение общего вида: A*x² + B*x*y + C*y² + D*x + E*y + F = 0
-    # Строим систему уравнений для 5 точек
+
     A_matrix = np.column_stack((
         x**2,
         x*y,
@@ -24,22 +23,16 @@ def find_ellipse_center(points):
         np.ones(5)
     ))
     
-    # Решаем систему методом наименьших квадратов
-    # Используем SVD для устойчивости решения
     _, _, V = np.linalg.svd(A_matrix)
     coeffs = V[-1, :]
     
     A, B, C, D, E, F = coeffs
     
-    # Проверяем, что это действительно эллипс (B² - 4AC < 0)
     discriminant = B**2 - 4*A*C
     if discriminant >= 0:
         raise ValueError("Точки не образуют эллипс (дискриминант >= 0)")
     
-    # Находим центр (h, k) эллипса:
-    # Решаем систему:
-    # 2Ah + Bk + D = 0
-    # Bh + 2Ck + E = 0
+
     M = np.array([
         [2*A, B],
         [B, 2*C]
@@ -49,7 +42,6 @@ def find_ellipse_center(points):
     try:
         h, k = np.linalg.solve(M, rhs)
     except np.linalg.LinAlgError:
-        # Если матрица вырождена, попробуем метод наименьших квадратов
         h, k = np.linalg.lstsq(M, rhs, rcond=None)[0]
     
     return np.array([h, k])

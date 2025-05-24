@@ -23,6 +23,7 @@ class SimulationOrbit(QThread):
 
             new_vec = obj.position - self.object_dict.get(obj.center_name).position
 
+            
 
             if(abs(angle_between_vectors(new_vec, obj.last_central_vector)) >= 1):
                 obj.last_central_vector = new_vec
@@ -48,8 +49,8 @@ class SimulationOrbit(QThread):
                 color = QColor(150, 150, 170)
 
             if obj.obType== 'moon':
-                center = np.array(self.object_dict.get('солнце').position, dtype=np.float64) / scale
-            else: center = (np.array(self.object_dict.get(obj.center_name).position, dtype=np.float64) + np.array(obj.center_orbit, dtype=float)) / scale
+                center = np.array([0,0,0], dtype=np.float64) / scale
+            else: center = (np.array(obj.center_orbit, dtype=float)) / scale
 
             self.orbit_data[obj.name] = {
                 'points': [p1, p2, p3],
@@ -109,13 +110,13 @@ class SimulationOrbit(QThread):
             #print(f"{A}, {B}, {C}")
 
             if B**2 - 4*A*C >= 0:
-                print("Точки не образуют эллипс")
+                #print("Точки не образуют эллипс")
                 return None
 
             return {'A': A, 'B': B, 'C': C}
             
         except np.linalg.LinAlgError:
-            print("np.linalg.LinAlgError")
+            #print("np.linalg.LinAlgError")
             return None
 
     def _generate_ellipse_points(self, equation, num_points=100):

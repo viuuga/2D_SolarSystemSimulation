@@ -57,6 +57,7 @@
     <Compile Include="SolarSystem_0_1\my_math\Geometry.py" />
     <Compile Include="SolarSystem_0_1\my_math\PhysicsEngine.py" />
     <Compile Include="SolarSystem_0_1\my_math\Point.py" />
+    <Compile Include="SolarSystem_0_1\my_math\PhysicsEngine_v2.py" />
     <Compile Include="SolarSystem_0_1\renderers\ObjectRenderer.py" />
     <Compile Include="SolarSystem_0_1\renderers\OrbitRenderer.py" />
     <Compile Include="SolarSystem_0_1\simulation\SimulationOrbit.py" />

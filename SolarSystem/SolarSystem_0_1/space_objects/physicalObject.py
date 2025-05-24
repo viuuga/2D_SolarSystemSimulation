@@ -14,6 +14,11 @@ from collections import deque
 
 G = 6.67430e-11  # Гравитационная постоянная (Н·м²/кг²)
 
+class GravitationInfluationObject:
+    def __init__(self, position: np.ndarray, mass: int):
+        self.position = position
+        self.mass = mass
+
 class PhysicalObject:
     def __init__(self, 
                  x: float, 
@@ -53,6 +58,7 @@ class PhysicalObject:
         self.is_visibiliti = False
 
         self.gravitation_influences = []
+        self.gravitation_influences_for_multiply = []
         self.center_name = center_name
         self.obType = obType
 
@@ -72,6 +78,25 @@ class PhysicalObject:
 
     def get_mass(self) -> float:
         return self.mass
+
+    def to_dict2(self, delta_time):
+        return {
+            'name': self.name,
+            'position': self.position.tolist(),
+            'velocity': self.velocity.tolist(),
+            'acceleration': self.acceleration.tolist(),
+            'last_acceleration': self.last_acceleration.tolist(),
+            'mass': self.mass,
+            'gravitation_influences': self.gravitation_influences_for_multiply,
+            'delta_time': delta_time
+        }
+
+    def from_dict2(self, data: dict):
+        self.position = np.array(data['position'], dtype=float)
+        self.velocity = np.array(data['velocity'], dtype=float)
+        self.acceleration = np.array(data['acceleration'], dtype=float)
+        self.last_acceleration = np.array(data['last_acceleration'], dtype=float)
+
 
     def to_dict(self):
         return {
@@ -98,8 +123,14 @@ class PhysicalObject:
         self.last_update_time = data['last_update_time']
 
     def add_gravitational_influence(self, obj: 'PhysicalObject'):
-        if obj not in self.gravitation_influences:
-            self.gravitation_influences.append(obj)
+        self.gravitation_influences.append(obj)
+        self.gravitation_influences_for_multiply.append(GravitationInfluationObject(position = obj.position, mass = obj.mass))
+
+    def update_gravitational_influence(self):
+        self.gravitation_influences_for_multiply = []
+        for obj in self.gravitation_influences:
+             self.gravitation_influences_for_multiply.append(GravitationInfluationObject(position = obj.position, mass = obj.mass))
+
 
     def _generate_orbit_color(self):
         hash_val = hash(self.name) % 0xFFFFFF
