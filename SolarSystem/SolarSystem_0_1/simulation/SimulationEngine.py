@@ -10,7 +10,7 @@ class SimulationEngine(QThread):
     def __init__(self,pool, camera, loader):
         super().__init__()
         self.pool = pool
-        self.time_acceleration = 300_000
+        self.time_acceleration = 1
         self.following_object_text = None
         self.camera = camera
         self.loader = loader
@@ -30,29 +30,24 @@ class SimulationEngine(QThread):
         self.delta_time = (self.elapsed_timer.elapsed() - self.last_time_update) * self.time_acceleration / 1000
         self.last_time_update = self.elapsed_timer.elapsed()
 
+        if self.delta_time > 4000:
+            self.delta_time = 4000
+
         self.start()
 
 
     def run(self):
-        max_substep = 300
+        max_substep = 200
         substeps_count = max(1, int(self.delta_time / max_substep))
         substep_time = self.delta_time / substeps_count
 
-        objects_data = [obj.to_dict2(substep_time) for obj in self.loader.objects]
 
         while(substeps_count != 0):
             self.fps_count += 1
             substeps_count -= 1
 
-            for procces_object, data_object in zip(objects_data, self.loader.objects):
-                data_object.update_gravitational_influence()
+            list(map(lambda obj: PhysicsEngine2.update_position(obj, substep_time), self.loader.objects))
 
-                procces_object['gravitation_influences'] = data_object.gravitation_influences_for_multiply
-
-            objects_data = list(map(PhysicsEngine2.update_position, objects_data))
-
-            for obj, result in zip(self.loader.objects, objects_data):
-                obj.from_dict2(result)
 
             if self.following_object_text is not None:
                 foloving_object = self.loader.objects_dict.get(self.following_object_text)
@@ -61,7 +56,7 @@ class SimulationEngine(QThread):
                     self.camera.offset = Point(-foloving_object.position[0], -foloving_object.position[1])
 
 
-        print((self.elapsed_timer.elapsed() - self.last_time_update) / 1000, " секунд")
+        #print((self.elapsed_timer.elapsed() - self.last_time_update) / 1000, " секунд")
         self.task_completed.emit(True)
 
     def update_positions(self):

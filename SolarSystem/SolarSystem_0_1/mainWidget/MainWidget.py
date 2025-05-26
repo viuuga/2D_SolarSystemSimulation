@@ -23,6 +23,7 @@ class MainWidget(QWidget):
         print(self.main_processe_pool)
         
         self.simulation_engine = SimulationEngine(self.main_processe_pool, self.camera, self.loader)
+
         self.simulation_engine.task_completed.connect(self.handle_positions_data)
         self.orbit_manager = OrbitRenderer(self.loader.objects, self.loader.objects_dict)
         self.orbit_simulator = SimulationOrbit(self.loader.objects, self.loader.objects_dict)

@@ -43,9 +43,28 @@
     <Content Include="SolarSystem_0_1\data\SolarSystem.json" />
     <Content Include="SolarSystem_0_1\my_math\__pycache__\m_f_file.cpython-311.pyc" />
     <Content Include="SolarSystem_0_1\space_objects\__pycache__\physicalObject.cpython-311.pyc" />
+    <Content Include="SolarSystem_0_1\textures\callisto.png" />
     <Content Include="SolarSystem_0_1\textures\earth.png" />
+    <Content Include="SolarSystem_0_1\textures\enceladus.png" />
+    <Content Include="SolarSystem_0_1\textures\europa.png" />
+    <Content Include="SolarSystem_0_1\textures\ganymede.png" />
+    <Content Include="SolarSystem_0_1\textures\io.png" />
+    <Content Include="SolarSystem_0_1\textures\jupiter.png" />
+    <Content Include="SolarSystem_0_1\textures\mars.png" />
+    <Content Include="SolarSystem_0_1\textures\mercury.png" />
     <Content Include="SolarSystem_0_1\textures\moon.png" />
+    <Content Include="SolarSystem_0_1\textures\neptune.png" />
     <Content Include="SolarSystem_0_1\textures\none_texture.png" />
+    <Content Include="SolarSystem_0_1\textures\oberon.png" />
+    <Content Include="SolarSystem_0_1\textures\pluto.png" />
+    <Content Include="SolarSystem_0_1\textures\saturn.png" />
+    <Content Include="SolarSystem_0_1\textures\sun.png" />
+    <Content Include="SolarSystem_0_1\textures\titan.png" />
+    <Content Include="SolarSystem_0_1\textures\titania.png" />
+    <Content Include="SolarSystem_0_1\textures\triton.png" />
+    <Content Include="SolarSystem_0_1\textures\uranus.png" />
+    <Content Include="SolarSystem_0_1\textures\venus.png" />
+    <Content Include="SolarSystem_0_1\textures\visibiliti.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="SolarSystem_0_1\data\LoaderData.py" />

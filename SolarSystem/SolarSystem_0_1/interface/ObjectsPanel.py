@@ -26,21 +26,20 @@ class ObjectsPanel(QFrame):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(5, 5, 5, 5)
         layout.setSpacing(10)
-        
-        # Заголовок и кнопка закрытия
+
         header = QWidget()
         header_layout = QHBoxLayout(header)
-        header_layout.setContentsMargins(0, 20, 0, 0)
+        header_layout.setContentsMargins(0, 60, 0, 0)
         
         self.title_label = QLabel("Объекты")
         self.title_label.setStyleSheet("font-weight: bold; font-size: 14px;")
         
         self.close_btn = QPushButton("×")
-        self.close_btn.setFixedSize(20, 20)
+        self.close_btn.setFixedSize(30, 30)
         self.close_btn.setStyleSheet("""
             QPushButton {
                 border: none;
-                font-size: 16px;
+                font-size: 20px;
             }
             QPushButton:hover {
                 color: red;
@@ -52,7 +51,6 @@ class ObjectsPanel(QFrame):
         header_layout.addStretch()
         header_layout.addWidget(self.close_btn)
         
-        # Список объектов
         self.objects_list = QListWidget()
         self.objects_list.setStyleSheet("""
             QListWidget {

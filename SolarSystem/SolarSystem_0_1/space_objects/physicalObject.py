@@ -12,8 +12,6 @@ from PySide6.QtGui import QPainter, QPixmap
 from PySide6.QtCore import QRectF
 from collections import deque
 
-G = 6.67430e-11  # Гравитационная постоянная (Н·м²/кг²)
-
 class GravitationInfluationObject:
     def __init__(self, position: np.ndarray, mass: int):
         self.position = position

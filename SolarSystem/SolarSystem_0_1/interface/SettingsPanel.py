@@ -54,6 +54,7 @@ class SettingsPanel(QWidget):
         self.back_btn.hide()
         self.orbit_btn.show()
         self.trajectory_btn.show()
+        self.visibiliti_btn.show()
         
     def show_orbit_settings(self):
         self.current_mode = "orbit"
@@ -84,7 +85,7 @@ class SettingsPanel(QWidget):
             if child.widget():
                 child.widget().deleteLater()
 
-        title = QLabel("Видимость орбит" if self.current_mode == "orbit" else "Видимость траекторий")
+        title = QLabel(self.current_mode)
         self.scroll_layout.addWidget(title)
 
         all_checkbox = QCheckBox("Все")
@@ -126,6 +127,7 @@ class SettingsPanel(QWidget):
     
         self.orbit_btn.hide()
         self.trajectory_btn.hide()
+        self.visibiliti_btn.hide()
         self.back_btn.show()
         self.scroll_area.show()
         

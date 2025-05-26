@@ -1,6 +1,7 @@
-import numpy as np
+﻿import numpy as np
 from typing import List
 from space_objects.physicalObject import GravitationInfluationObject
+from space_objects.physicalObject import PhysicalObject
 
 _temp_r_vecs = np.empty((20, 3))
 _temp_distances_sq = np.empty(20)
@@ -10,7 +11,7 @@ class PhysicsEngine2:
 
     @staticmethod
     def calculate_gravity(position: np.ndarray, mass: float, 
-                         gravitation_influences: List[GravitationInfluationObject]) -> np.ndarray:
+                         gravitation_influences: List[PhysicalObject]) -> np.ndarray:
         if not gravitation_influences:
             return np.zeros(3)
     
@@ -33,30 +34,16 @@ class PhysicsEngine2:
         return np.sum(force_mags[:, np.newaxis] * force_dirs, axis=0) / mass
 
     @staticmethod
-    def update_position(data: dict) -> dict:
-        position = np.array(data['position'], dtype=float)
-        velocity = np.array(data['velocity'], dtype=float)
-        acceleration = np.array(data['acceleration'], dtype=float)
-        last_acceleration = np.array(data['last_acceleration'], dtype=float)
+    def update_position(data: PhysicalObject, delta_time) :
     
-        if len(data['gravitation_influences']) == 0:
-            position += velocity * data['delta_time']
+        if len(data.gravitation_influences) == 0:
+            data.position += data.velocity * delta_time
         else:
-            last_acceleration = acceleration.copy()
-            acceleration = PhysicsEngine2.calculate_gravity(
-                position, data['mass'], data['gravitation_influences']
+            last_acceleration = data.acceleration.copy()
+            data.acceleration = PhysicsEngine2.calculate_gravity(
+                data.position, data.mass, data.gravitation_influences
             )
         
-            position += velocity * data['delta_time'] + 0.5 * last_acceleration * data['delta_time']**2
-            velocity += 0.5 * (last_acceleration + acceleration) * data['delta_time']
+            data.position += data.velocity * delta_time + 0.5 * last_acceleration * delta_time ** 2
+            data.velocity += 0.5 * (last_acceleration + data.acceleration) * delta_time
     
-        return {
-            'position': position.tolist(),
-            'velocity': velocity.tolist(),
-            'acceleration': acceleration.tolist(),
-            'last_acceleration': last_acceleration.tolist(),
-            'mass': data['mass'],
-            'gravitation_influences': data['gravitation_influences'],
-            'delta_time': data['delta_time'],
-            'name': data['name']
-        }
