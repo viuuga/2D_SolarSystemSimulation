@@ -1,6 +1,6 @@
 ﻿import numpy as np
 from typing import List
-from space_objects.physicalObject import GravitationInfluationObject
+from space_objects.physicalObject import GravitationInfluansionObject
 from space_objects.physicalObject import PhysicalObject
 
 _temp_r_vecs = np.empty((20, 3))

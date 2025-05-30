@@ -12,7 +12,7 @@ from PySide6.QtGui import QPainter, QPixmap
 from PySide6.QtCore import QRectF
 from collections import deque
 
-class GravitationInfluationObject:
+class GravitationInfluansionObject:
     def __init__(self, position: np.ndarray, mass: int):
         self.position = position
         self.mass = mass
@@ -122,12 +122,12 @@ class PhysicalObject:
 
     def add_gravitational_influence(self, obj: 'PhysicalObject'):
         self.gravitation_influences.append(obj)
-        self.gravitation_influences_for_multiply.append(GravitationInfluationObject(position = obj.position, mass = obj.mass))
+        self.gravitation_influences_for_multiply.append(GravitationInfluansionObject(position = obj.position, mass = obj.mass))
 
     def update_gravitational_influence(self):
         self.gravitation_influences_for_multiply = []
         for obj in self.gravitation_influences:
-             self.gravitation_influences_for_multiply.append(GravitationInfluationObject(position = obj.position, mass = obj.mass))
+             self.gravitation_influences_for_multiply.append(GravitationInfluansionObject(position = obj.position, mass = obj.mass))
 
 
     def _generate_orbit_color(self):

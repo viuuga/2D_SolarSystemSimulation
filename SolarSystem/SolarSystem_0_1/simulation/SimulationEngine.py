@@ -56,7 +56,7 @@ class SimulationEngine(QThread):
                     self.camera.offset = Point(-foloving_object.position[0], -foloving_object.position[1])
 
 
-        #print((self.elapsed_timer.elapsed() - self.last_time_update) / 1000, " секунд")
+        print((self.elapsed_timer.elapsed() - self.last_time_update) / 1000, " секунд")
         self.task_completed.emit(True)
 
     def update_positions(self):

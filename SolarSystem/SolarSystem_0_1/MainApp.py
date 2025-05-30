@@ -1,7 +1,5 @@
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget,
-                               QHBoxLayout, QLabel, QSlider, QMenuBar,
-                               QSizePolicy, QDockWidget)
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QLabel, QSlider, QMenuBar, QDockWidget
 
 
 from interface.SpeedSlider import SpeedWidget
@@ -73,7 +71,6 @@ class MainApp(QMainWindow):
     def handle_object_change(self, value):
         print(f"Объект выбран: {value}")
         self.mainWidget.simulation_engine.following_object_text = value
-
 
 if __name__ == "__main__":
     app = QApplication()
